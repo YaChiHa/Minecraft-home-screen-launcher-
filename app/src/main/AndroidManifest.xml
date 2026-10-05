@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <!-- Allow discovery of normal user-launchable activities. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -18,17 +26,18 @@
             android:taskAffinity=""
             android:windowSoftInputMode="adjustResize"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboardHidden">
-            <!-- Makes this a Home app (needed for ROLE_HOME and the Home button). -->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <!-- Lets the user open BlockHome from their current launcher to tap "Set as default". -->
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
     </application>
 </manifest>
