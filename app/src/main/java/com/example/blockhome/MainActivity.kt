@@ -165,6 +165,9 @@ class MainActivity : ComponentActivity() {
         findViewById<Button>(R.id.reset_background_button).setOnClickListener {
             resetBackground()
         }
+        findViewById<Button>(R.id.back_settings_button).setOnClickListener {
+    closeSettings()
+        }
 
         setDefaultButton.setOnClickListener {
             requestHomeRole()
