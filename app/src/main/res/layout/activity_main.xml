@@ -161,16 +161,16 @@
                 android:layout_weight="1" />
 
             <Button
-                android:layout_width="match_parent"
-                android:layout_height="52dp"
-                android:background="@drawable/bg_button"
-                android:fontFamily="monospace"
-                android:stateListAnimator="@null"
-                android:onClick="closeSettings"
-                android:text="@string/back"
-                android:textColor="#FFFFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+    android:id="@+id/back_settings_button"
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:background="@drawable/bg_button"
+    android:fontFamily="monospace"
+    android:stateListAnimator="@null"
+    android:text="@string/back"
+    android:textColor="#FFFFFFFF"
+    android:textSize="14sp"
+    android:textStyle="bold" /> 
         </LinearLayout>
 
         <LinearLayout
