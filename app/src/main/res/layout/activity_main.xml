@@ -4,6 +4,7 @@
     android:layout_height="match_parent">
 
     <com.example.blockhome.ui.BlockyBackgroundView
+        android:id="@+id/background_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
@@ -70,6 +71,19 @@
                 android:layout_weight="1" />
 
             <Button
+                android:id="@+id/settings_button"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginBottom="8dp"
+                android:background="@drawable/bg_button"
+                android:fontFamily="monospace"
+                android:stateListAnimator="@null"
+                android:text="@string/settings"
+                android:textColor="#FFFFFFFF"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <Button
                 android:id="@+id/set_default_button"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -92,6 +106,70 @@
                 android:text="@string/app_drawer"
                 android:textColor="#FFFFFFFF"
                 android:textSize="16sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/settings_panel"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:background="@drawable/bg_panel"
+            android:orientation="vertical"
+            android:padding="16dp"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="monospace"
+                android:gravity="center"
+                android:paddingBottom="20dp"
+                android:text="@string/blockhome_settings"
+                android:textColor="#FFFFFFFF"
+                android:textSize="22sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/choose_background_button"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginBottom="12dp"
+                android:background="@drawable/bg_button"
+                android:fontFamily="monospace"
+                android:stateListAnimator="@null"
+                android:text="@string/choose_background"
+                android:textColor="#FFFFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/reset_background_button"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_button"
+                android:fontFamily="monospace"
+                android:stateListAnimator="@null"
+                android:text="@string/reset_background"
+                android:textColor="#FFFFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:background="@drawable/bg_button"
+                android:fontFamily="monospace"
+                android:stateListAnimator="@null"
+                android:onClick="closeSettings"
+                android:text="@string/back"
+                android:textColor="#FFFFFFFF"
+                android:textSize="14sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
