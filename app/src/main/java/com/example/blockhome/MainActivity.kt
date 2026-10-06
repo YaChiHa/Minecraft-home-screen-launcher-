@@ -153,6 +153,9 @@ class MainActivity : ComponentActivity() {
         findViewById<Button>(R.id.drawer_button).setOnClickListener {
             openDrawer()
         }
+        findViewById<Button>(R.id.close_drawer_button).setOnClickListener {
+    closeDrawer()
+        }
 
         findViewById<Button>(R.id.settings_button).setOnClickListener {
             openSettings()
