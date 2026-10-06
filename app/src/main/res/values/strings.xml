@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BlockHome</string>
-
+<string name="close_drawer">CLOSE APP DRAWER</string>
     <string name="app_drawer">APP DRAWER</string>
+    
     <string name="set_default">SET AS DEFAULT HOME</string>
     <string name="search_hint">Search apps…</string>
     <string name="cannot_launch">Can\'t open that app</string>
