@@ -107,7 +107,12 @@ private lateinit var soundToggleButton: Button
 
         preferences = getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
 
-        repo = AppRepository(applicationContext)
+soundManager = SoundManager(applicationContext)
+
+val soundEnabled = preferences.getBoolean(KEY_SOUND_ENABLED, true)
+soundManager.setEnabled(soundEnabled)
+
+repo = AppRepository(applicationContext)
         launcherApps = getSystemService(LauncherApps::class.java)
 
         backgroundView = findViewById(R.id.background_view)
