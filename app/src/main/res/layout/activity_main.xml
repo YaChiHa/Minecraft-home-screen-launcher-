@@ -154,6 +154,18 @@
                 android:textColor="#FFFFFFFF"
                 android:textSize="14sp"
                 android:textStyle="bold" />
+            <Button
+    android:id="@+id/sound_toggle_button"
+    android:layout_width="match_parent"
+    android:layout_height="52dp"
+    android:layout_marginTop="12dp"
+    android:background="@drawable/bg_button"
+    android:fontFamily="monospace"
+    android:stateListAnimator="@null"
+    android:text="@string/sound_on"
+    android:textColor="#FFFFFFFF"
+    android:textSize="14sp"
+    android:textStyle="bold" />
 
             <View
                 android:layout_width="match_parent"
