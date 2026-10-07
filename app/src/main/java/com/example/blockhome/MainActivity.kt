@@ -43,6 +43,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var setDefaultButton: Button
     private lateinit var backgroundView: BlockyBackgroundView
     private lateinit var preferences: SharedPreferences
+    private lateinit var soundManager: SoundManager
+private lateinit var soundToggleButton: Button
 
     private var allApps: List<AppEntry> = emptyList()
     private var loadJob: Job? = null
