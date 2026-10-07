@@ -175,6 +175,20 @@ repo = AppRepository(applicationContext)
         findViewById<Button>(R.id.reset_background_button).setOnClickListener {
             resetBackground()
         }
+        soundToggleButton = findViewById(R.id.sound_toggle_button)
+updateSoundButton()
+
+soundToggleButton.setOnClickListener {
+    val enabled = !soundManager.isEnabled()
+
+    soundManager.setEnabled(enabled)
+
+    preferences.edit()
+        .putBoolean(KEY_SOUND_ENABLED, enabled)
+        .apply()
+
+    updateSoundButton()
+}
         findViewById<Button>(R.id.back_settings_button).setOnClickListener {
     closeSettings()
         }
