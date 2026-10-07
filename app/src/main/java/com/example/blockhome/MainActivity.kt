@@ -434,13 +434,13 @@ soundToggleButton.setOnClickListener {
             }
         }
     }
+    
+private companion object {
+    const val COLUMNS = 4
+    const val HOME_SLOTS = 8
+    const val RELOAD_DEBOUNCE_MS = 300L
 
-    private companion object {
-        const val COLUMNS = 4
-        const val HOME_SLOTS = 8
-        const val RELOAD_DEBOUNCE_MS = 300L
-
-        const val PREFS_NAME = "blockhome_preferences"
-        const val KEY_BACKGROUND_URI = "background_uri"
-    }
+    const val PREFS_NAME = "blockhome_preferences"
+    const val KEY_BACKGROUND_URI = "background_uri"
+    const val KEY_SOUND_ENABLED = "sound_enabled"
 }
