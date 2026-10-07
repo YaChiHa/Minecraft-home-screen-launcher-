@@ -110,10 +110,11 @@
         </LinearLayout>
 
         <LinearLayout
-            android:id="@+id/settings_panel"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
+    android:id="@+id/settings_panel"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="8dp"
+    android:clickable="true"
             android:background="@drawable/bg_panel"
             android:orientation="vertical"
             android:padding="16dp"
