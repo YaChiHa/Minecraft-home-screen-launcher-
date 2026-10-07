@@ -444,3 +444,4 @@ private companion object {
     const val KEY_BACKGROUND_URI = "background_uri"
     const val KEY_SOUND_ENABLED = "sound_enabled"
 }
+}
