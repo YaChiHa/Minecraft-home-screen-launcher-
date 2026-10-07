@@ -301,6 +301,14 @@ soundToggleButton.setOnClickListener {
     private fun closeSettings() {
         findViewById<View>(R.id.settings_panel).visibility = View.GONE
     }
+    private fun updateSoundButton() {
+    soundToggleButton.text =
+        if (soundManager.isEnabled()) {
+            getString(R.string.sound_on)
+        } else {
+            getString(R.string.sound_off)
+        }
+    }
 
     private fun scheduleReload() {
         reload(RELOAD_DEBOUNCE_MS)
