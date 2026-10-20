@@ -81,6 +81,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:minHeight="8dp"
+                android:progressDrawable="@drawable/sound_volume_track"
                 android:max="100"
                 android:progress="70"
                 android:contentDescription="@string/sound_volume_label" />
