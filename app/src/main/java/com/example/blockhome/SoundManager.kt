@@ -29,9 +29,12 @@ class SoundManager(context: Context) {
         try {
             soundExecutor.execute {
                 try {
-                    toneGenerator?.setVolume(volume / 100f)
+                    // ToneGenerator volume is set at construction, so recreate it
+                    // on the audio thread when the slider changes.
+                    toneGenerator?.release()
+                    toneGenerator = null
                 } catch (_: Exception) {
-                    // Volume changes must never affect launcher operation.
+                    toneGenerator = null
                 }
             }
         } catch (_: Exception) {
@@ -56,7 +59,6 @@ class SoundManager(context: Context) {
                         volume
                     ).also { toneGenerator = it }
 
-                    tone.setVolume(volume / 100f)
                     tone.startTone(ToneGenerator.TONE_PROP_BEEP, 60)
                 } catch (_: Exception) {
                     // Sound failure must never affect launcher operation.
