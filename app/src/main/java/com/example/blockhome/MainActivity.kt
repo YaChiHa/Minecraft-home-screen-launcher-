@@ -165,6 +165,7 @@ repo = AppRepository(applicationContext)
         }
 
         findViewById<Button>(R.id.settings_button).setOnClickListener {
+            soundManager.playClick()
             openSettings()
         }
 
