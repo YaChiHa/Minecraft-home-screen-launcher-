@@ -14,6 +14,8 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
@@ -45,6 +47,8 @@ class MainActivity : ComponentActivity() {
     private lateinit var preferences: SharedPreferences
     private lateinit var soundManager: SoundManager
 private lateinit var soundToggleButton: Button
+    private lateinit var soundVolumeSeekBar: SeekBar
+    private lateinit var soundVolumeLabel: TextView
 
     private var allApps: List<AppEntry> = emptyList()
     private var loadJob: Job? = null
@@ -111,6 +115,7 @@ soundManager = SoundManager(applicationContext)
 
 val soundEnabled = preferences.getBoolean(KEY_SOUND_ENABLED, true)
 soundManager.setEnabled(soundEnabled)
+soundManager.setVolume(preferences.getInt(KEY_SOUND_VOLUME, DEFAULT_SOUND_VOLUME))
 
 repo = AppRepository(applicationContext)
         launcherApps = getSystemService(LauncherApps::class.java)
@@ -190,6 +195,26 @@ soundToggleButton.setOnClickListener {
 
     updateSoundButton()
 }
+
+soundVolumeSeekBar = findViewById(R.id.sound_volume_seekbar)
+soundVolumeLabel = findViewById(R.id.sound_volume_label)
+soundVolumeSeekBar.max = 100
+soundVolumeSeekBar.progress = soundManager.getVolume()
+updateSoundVolumeLabel(soundManager.getVolume())
+
+soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+        soundManager.setVolume(progress)
+        updateSoundVolumeLabel(progress)
+        if (fromUser) {
+            preferences.edit().putInt(KEY_SOUND_VOLUME, progress).apply()
+        }
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar?) = Unit
+
+    override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
+})
         findViewById<Button>(R.id.back_settings_button).setOnClickListener {
     closeSettings()
         }
@@ -307,12 +332,16 @@ soundToggleButton.setOnClickListener {
         findViewById<View>(R.id.settings_panel).visibility = View.GONE
     }
     private fun updateSoundButton() {
-    soundToggleButton.text =
-        if (soundManager.isEnabled()) {
-            getString(R.string.sound_on)
-        } else {
-            getString(R.string.sound_off)
-        }
+        soundToggleButton.text =
+            if (soundManager.isEnabled()) {
+                getString(R.string.sound_on)
+            } else {
+                getString(R.string.sound_off)
+            }
+    }
+
+    private fun updateSoundVolumeLabel(volume: Int) {
+        soundVolumeLabel.text = getString(R.string.sound_volume_format, volume)
     }
 
     private fun scheduleReload() {
@@ -448,5 +477,7 @@ private companion object {
     const val PREFS_NAME = "blockhome_preferences"
     const val KEY_BACKGROUND_URI = "background_uri"
     const val KEY_SOUND_ENABLED = "sound_enabled"
+    const val KEY_SOUND_VOLUME = "sound_volume"
+    const val DEFAULT_SOUND_VOLUME = 70
 }
 }
