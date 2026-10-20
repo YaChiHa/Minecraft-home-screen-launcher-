@@ -65,6 +65,26 @@
                     android:layout_height="wrap_content" />
             </FrameLayout>
 
+            <TextView
+                android:id="@+id/sound_volume_label"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="monospace"
+                android:text="@string/sound_volume_format"
+                android:textColor="#FFFFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <SeekBar
+                android:id="@+id/sound_volume_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:max="100"
+                android:progress="70"
+                android:contentDescription="@string/sound_volume_label" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
