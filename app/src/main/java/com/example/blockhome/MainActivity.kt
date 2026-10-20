@@ -163,9 +163,11 @@ repo = AppRepository(applicationContext)
         }
 
         findViewById<Button>(R.id.drawer_button).setOnClickListener {
+            soundManager.playClick()
             openDrawer()
         }
         findViewById<Button>(R.id.close_drawer_button).setOnClickListener {
+    soundManager.playClick()
     closeDrawer()
         }
 
@@ -175,16 +177,19 @@ repo = AppRepository(applicationContext)
         }
 
         findViewById<Button>(R.id.choose_background_button).setOnClickListener {
+            soundManager.playClick()
             chooseBackground()
         }
 
         findViewById<Button>(R.id.reset_background_button).setOnClickListener {
+            soundManager.playClick()
             resetBackground()
         }
         soundToggleButton = findViewById(R.id.sound_toggle_button)
 updateSoundButton()
 
 soundToggleButton.setOnClickListener {
+    soundManager.playClick()
     val enabled = !soundManager.isEnabled()
 
     soundManager.setEnabled(enabled)
@@ -216,10 +221,12 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
     override fun onStopTrackingTouch(seekBar: SeekBar?) = Unit
 })
         findViewById<Button>(R.id.back_settings_button).setOnClickListener {
+    soundManager.playClick()
     closeSettings()
         }
 
         setDefaultButton.setOnClickListener {
+            soundManager.playClick()
             requestHomeRole()
         }
 
@@ -390,6 +397,7 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
     }
 
     private fun launchApp(entry: AppEntry) {
+        soundManager.playClick()
         if (repo.launch(entry)) {
             closeDrawer()
         } else {
