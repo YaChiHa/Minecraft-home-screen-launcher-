@@ -19,4 +19,6 @@
     
     <string name="sound_on">SOUND: ON</string>
 <string name="sound_off">SOUND: OFF</string>
+    <string name="sound_volume_label">Click sound volume</string>
+    <string name="sound_volume_format">SOUND VOLUME: %1$d%%</string>
 </resources>
