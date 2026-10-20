@@ -232,6 +232,10 @@ soundToggleButton.setOnClickListener {
             backgroundView.release()
         }
 
+        if (::soundManager.isInitialized) {
+            soundManager.release()
+        }
+
         super.onDestroy()
     }
 
