@@ -17,7 +17,7 @@ class SoundManager(context: Context) {
     @Volatile
     private var volume = 70
 
-    // Create and use ToneGenerator on a background thread so UI clicks never wait for audio setup.
+    // Keep all ToneGenerator operations on one background thread.
     private var toneGenerator: ToneGenerator? = null
 
     fun setEnabled(value: Boolean) {
@@ -26,6 +26,17 @@ class SoundManager(context: Context) {
 
     fun setVolume(value: Int) {
         volume = value.coerceIn(0, 100)
+        try {
+            soundExecutor.execute {
+                try {
+                    toneGenerator?.setVolume(volume / 100f)
+                } catch (_: Exception) {
+                    // Volume changes must never affect launcher operation.
+                }
+            }
+        } catch (_: Exception) {
+            // Ignore calls after shutdown.
+        }
     }
 
     fun isEnabled(): Boolean = enabled
@@ -45,6 +56,7 @@ class SoundManager(context: Context) {
                         volume
                     ).also { toneGenerator = it }
 
+                    tone.setVolume(volume / 100f)
                     tone.startTone(ToneGenerator.TONE_PROP_BEEP, 60)
                 } catch (_: Exception) {
                     // Sound failure must never affect launcher operation.
