@@ -521,6 +521,9 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
 
     private fun openDrawer() {
         drawer.visibility = View.VISIBLE
+        val glass = preferences.getString(KEY_THEME, DEFAULT_THEME) == "Glass"
+        findViewById<View>(R.id.home_content).visibility =
+            if (glass) View.INVISIBLE else View.VISIBLE
     }
 
     private fun closeDrawer() {
@@ -537,9 +540,10 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
             )
 
         drawer.visibility = View.GONE
+        findViewById<View>(R.id.home_content).visibility = View.VISIBLE
     }
 
-    private fun updateDefaultButton() {
+    private fun updateDefaultButton) {
         val rm = getSystemService(RoleManager::class.java)
 
         val held =
