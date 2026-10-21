@@ -6,6 +6,9 @@ import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.os.Build
 import android.net.Uri
 import android.util.AttributeSet
 import android.view.View
@@ -26,6 +29,7 @@ class BlockyBackgroundView @JvmOverloads constructor(
 
     private var bitmap: Bitmap? = null
     private var customBitmap: Bitmap? = null
+    private var activeTheme: String = "Grass & Dirt"
 
     private val src = Rect()
     private val dst = Rect()
@@ -80,6 +84,21 @@ class BlockyBackgroundView @JvmOverloads constructor(
             dst,
             paint
         )
+    }
+
+    fun setTheme(theme: String) {
+        activeTheme = theme
+        if (customBitmap == null && width > 0 && height > 0) {
+            bitmap?.recycle()
+            bitmap = render(width, height)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            setRenderEffect(
+                if (theme == "Glass") RenderEffect.createBlurEffect(7f, 7f, Shader.TileMode.CLAMP)
+                else null
+            )
+        }
+        invalidate()
     }
 
     fun setCustomBackground(uri: Uri) {
@@ -212,46 +231,40 @@ class BlockyBackgroundView @JvmOverloads constructor(
             for (y in 0 until rows) {
                 val n = noise(x, y)
 
-                px[y * cols + x] =
-                    when {
-                        y < ground -> {
-                            val band =
-                                (
-                                    y *
-                                        SKY.size /
-                                        max(
-                                            1,
-                                            groundBase.toInt()
-                                        )
-                                    ).coerceIn(
-                                        0,
-                                        SKY.size - 1
-                                    )
-
-                            SKY[band]
+                px[y * cols + x] = when {
+                    y < ground -> {
+                        val sky = when (activeTheme) {
+                            "Stone" -> intArrayOf(0xFF777F89.toInt(), 0xFF929AA3.toInt(), 0xFFADB4BC.toInt(), 0xFFC8CDD2.toInt())
+                            "Diamond" -> intArrayOf(0xFF07566B.toInt(), 0xFF087C99.toInt(), 0xFF32AFC7.toInt(), 0xFF8AEAF2.toInt())
+                            "Amethyst" -> intArrayOf(0xFF28153F.toInt(), 0xFF48266A.toInt(), 0xFF70429A.toInt(), 0xFFB68ADD.toInt())
+                            "Glass" -> intArrayOf(0xFF467F9A.toInt(), 0xFF619BB6.toInt(), 0xFF8FC1D4.toInt(), 0xFFC5E8F2.toInt())
+                            "Nether" -> intArrayOf(0xFF32141F.toInt(), 0xFF5C1C2A.toInt(), 0xFF8A2A24.toInt(), 0xFFB94B2D.toInt())
+                            else -> SKY
                         }
-
-                        y == ground ->
-                            if (n < 60) {
-                                GRASS_DARK
-                            } else {
-                                GRASS
-                            }
-
-                        y < ground + 4 ->
-                            if (n < 40) {
-                                DIRT_DARK
-                            } else {
-                                DIRT
-                            }
-
-                        else ->
-                            when {
-                                n < 35 -> STONE_DARK
-                                n > 230 -> STONE_LIGHT
-                                else -> STONE
-                            }
+                        sky[(y * sky.size / max(1, groundBase.toInt())).coerceIn(0, sky.lastIndex)]
                     }
+                    y == ground -> when (activeTheme) {
+                        "Stone" -> if (n < 60) 0xFF626262.toInt() else 0xFF9A9A9A.toInt()
+                        "Diamond" -> if (n < 60) 0xFF087D91.toInt() else 0xFF38C5D7.toInt()
+                        "Amethyst" -> if (n < 60) 0xFF633A83.toInt() else 0xFFB77BE0.toInt()
+                        "Glass" -> if (n < 60) 0xFF6797A8.toInt() else 0xFFB8E3EE.toInt()
+                        "Nether" -> if (n < 60) 0xFF7A241D.toInt() else 0xFFD64B2D.toInt()
+                        else -> if (n < 60) GRASS_DARK else GRASS
+                    }
+                    y < ground + 4 -> when (activeTheme) {
+                        "Stone" -> if (n < 40) 0xFF494949.toInt() else 0xFF777777.toInt()
+                        "Diamond" -> if (n < 40) 0xFF06485A.toInt() else 0xFF087D91.toInt()
+                        "Amethyst" -> if (n < 40) 0xFF352044.toInt() else 0xFF58336F.toInt()
+                        "Glass" -> if (n < 40) 0xFF5A7581.toInt() else 0xFF789EAD.toInt()
+                        "Nether" -> if (n < 40) 0xFF39191B.toInt() else 0xFF612522.toInt()
+                        else -> if (n < 40) DIRT_DARK else DIRT
+                    }
+                    else -> when {
+                        n < 35 -> STONE_DARK
+                        n > 230 -> STONE_LIGHT
+                        else -> STONE
+                    }
+                }
             }
         }
 
