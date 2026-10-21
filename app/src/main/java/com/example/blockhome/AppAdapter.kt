@@ -18,8 +18,8 @@ private object AppDiff : DiffUtil.ItemCallback<AppEntry>() {
 }
 
 class AppAdapter(
-    private val onClick: (AppEntry) -> Unit,
-    private val currentTheme: () -> String
+    private val currentTheme: () -> String,
+    private val onClick: (AppEntry) -> Unit
 ) : ListAdapter<AppEntry, AppAdapter.VH>(AppDiff) {
 
     class VH(view: View) : RecyclerView.ViewHolder(view) {
