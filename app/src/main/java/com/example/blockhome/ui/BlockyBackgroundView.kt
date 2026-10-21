@@ -312,6 +312,58 @@ class BlockyBackgroundView @JvmOverloads constructor(
             }
         }
 
+        // Theme-colored pixel sun/moon and small sky glints add depth without animation.
+        val accent = when (activeTheme) {
+            "Stone" -> 0xFFE7E9EC.toInt()
+            "Diamond" -> 0xFF9AF6FF.toInt()
+            "Amethyst" -> 0xFFE1B7FF.toInt()
+            "Glass" -> 0xFFD9F8FF.toInt()
+            "Nether" -> 0xFFFFA05A.toInt()
+            else -> 0xFFFFE27A.toInt()
+        }
+        val sunX = cols - 7
+        val sunY = max(4, (rows * 0.19f).toInt())
+        for (dy in -2..2) {
+            for (dx in -2..2) {
+                if (kotlin.math.abs(dx) + kotlin.math.abs(dy) <= 3) {
+                    set(px, cols, rows, sunX + dx, sunY + dy, accent)
+                }
+            }
+        }
+        // Tiny pixel rays make the focal point feel block-built.
+        set(px, cols, rows, sunX, sunY - 4, accent)
+        set(px, cols, rows, sunX, sunY + 4, accent)
+        set(px, cols, rows, sunX - 4, sunY, accent)
+        set(px, cols, rows, sunX + 4, sunY, accent)
+
+        val glints = arrayOf(
+            intArrayOf(5, 8), intArrayOf(15, 5), intArrayOf(23, 13),
+            intArrayOf(8, 20), intArrayOf(19, 24), intArrayOf(31, 19)
+        )
+        for (glint in glints) {
+            val gx = glint[0]
+            val gy = (glint[1] * rows / 42).coerceIn(2, max(2, rows - 8))
+            set(px, cols, rows, gx, gy, accent)
+            if ((gx + gy) % 2 == 0) set(px, cols, rows, gx + 1, gy, accent)
+        }
+
+        // Small themed ore seams in the lower rock layer.
+        val ore = when (activeTheme) {
+            "Stone" -> 0xFFCFD2D6.toInt()
+            "Diamond", "Glass" -> 0xFF62E8F4.toInt()
+            "Amethyst" -> 0xFFC58AF0.toInt()
+            "Nether" -> 0xFFFF713D.toInt()
+            else -> 0xFFD5B56B.toInt()
+        }
+        for (x in intArrayOf(5, 14, 25, 32)) {
+            val ground = (rows * 0.66f + 2.0 * sin(x * 0.35) +
+                1.5 * sin(x * 0.13 + 1.0)).roundToInt()
+            val oy = ground + 5 + (x % 2)
+            set(px, cols, rows, x, oy, ore)
+            set(px, cols, rows, x + 1, oy, ore)
+            if (x % 2 == 0) set(px, cols, rows, x, oy + 1, ore)
+        }
+
         return Bitmap.createBitmap(
             px,
             cols,
