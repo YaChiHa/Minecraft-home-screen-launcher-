@@ -543,7 +543,7 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
         findViewById<View>(R.id.home_content).visibility = View.VISIBLE
     }
 
-    private fun updateDefaultButton) {
+    private fun updateDefaultButton() {
         val rm = getSystemService(RoleManager::class.java)
 
         val held =
