@@ -375,8 +375,10 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
         buttonIds.forEach { id -> findViewById<View>(id).background = blockLayer(colors[0], colors[1], colors[2]) }
         val glass = theme == "Glass"
         val settingsOpen = findViewById<View>(R.id.settings_panel).visibility == View.VISIBLE
+        val drawerOpen = findViewById<View>(R.id.drawer).visibility == View.VISIBLE
+        backgroundView.setBackgroundBlur(glass && (settingsOpen || drawerOpen))
         findViewById<View>(R.id.home_content).visibility =
-            if (glass && settingsOpen) View.INVISIBLE else View.VISIBLE
+            if (glass && (settingsOpen || drawerOpen)) View.INVISIBLE else View.VISIBLE
         val panelFace = if (glass) 0x447A9DB0 else colors[3]
         val panelEdge = if (glass) 0x6699E8FF else colors[1]
         fun panelBackground(): android.graphics.drawable.Drawable =
@@ -430,6 +432,7 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
         val glass = preferences.getString(KEY_THEME, DEFAULT_THEME) == "Glass"
         findViewById<View>(R.id.home_content).visibility =
             if (glass) View.INVISIBLE else View.VISIBLE
+        backgroundView.setBackgroundBlur(glass)
 
         animatePanelTransition(panel, show = true)
     }
@@ -443,6 +446,10 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
 
         animatePanelTransition(panel, show = false) {
             findViewById<View>(R.id.home_content).visibility = View.VISIBLE
+            backgroundView.setBackgroundBlur(
+                preferences.getString(KEY_THEME, DEFAULT_THEME) == "Glass" &&
+                    drawer.visibility == View.VISIBLE
+            )
         }
     }
 
@@ -585,6 +592,7 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
         val glass = preferences.getString(KEY_THEME, DEFAULT_THEME) == "Glass"
         findViewById<View>(R.id.home_content).visibility =
             if (glass) View.INVISIBLE else View.VISIBLE
+        backgroundView.setBackgroundBlur(glass)
 
         animatePanelTransition(drawer, show = true)
     }
@@ -604,6 +612,10 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
 
         animatePanelTransition(drawer, show = false) {
             findViewById<View>(R.id.home_content).visibility = View.VISIBLE
+            backgroundView.setBackgroundBlur(
+                preferences.getString(KEY_THEME, DEFAULT_THEME) == "Glass" &&
+                    findViewById<View>(R.id.settings_panel).visibility == View.VISIBLE
+            )
         }
     }
 
