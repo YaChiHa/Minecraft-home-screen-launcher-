@@ -618,7 +618,7 @@ private companion object {
     const val COLUMNS = 4
     const val HOME_SLOTS = 8
     const val RELOAD_DEBOUNCE_MS = 300L
-    const val DRAWER_ANIMATION_MS = 1500L
+    const val DRAWER_ANIMATION_MS = 500L
 
     const val PREFS_NAME = "blockhome_preferences"
     const val KEY_BACKGROUND_URI = "background_uri"
