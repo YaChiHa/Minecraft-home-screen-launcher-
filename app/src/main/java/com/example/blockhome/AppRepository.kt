@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.LauncherApps
 import android.content.pm.PackageManager
 import android.os.Process
+import android.os.Bundle
 
 class AppRepository(private val context: Context) {
 
@@ -106,12 +107,12 @@ class AppRepository(private val context: Context) {
         }
     }
 
-    fun launch(entry: AppEntry): Boolean = try {
+    fun launch(entry: AppEntry, options: Bundle? = null): Boolean = try {
         launcherApps.startMainActivity(
             entry.component,
             entry.user,
             null,
-            null
+            options
         )
         true
     } catch (_: Exception) {
