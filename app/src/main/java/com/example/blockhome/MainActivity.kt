@@ -56,6 +56,7 @@ private lateinit var soundToggleButton: Button
 
     private var allApps: List<AppEntry> = emptyList()
     private var loadJob: Job? = null
+    private var animateHomeOnResume = false
 
     private val roleLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -106,6 +107,25 @@ private lateinit var soundToggleButton: Button
             user: UserHandle,
             replacing: Boolean
         ) = scheduleReload()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (animateHomeOnResume) {
+            animateHomeOnResume = false
+            val content = findViewById<View>(R.id.content_layer)
+            content.animate().cancel()
+            content.alpha = 0.82f
+            content.scaleX = 0.96f
+            content.scaleY = 0.96f
+            content.animate()
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setDuration(TRANSITION_ANIMATION_MS)
+                .setInterpolator(DecelerateInterpolator())
+                .start()
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -546,11 +566,13 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
 
     private fun launchApp(entry: AppEntry) {
         soundManager.playClick()
+        animateHomeOnResume = true
         if (repo.launch(entry)) {
             recordAppLaunch(entry)
             homeAdapter.submitList(getHomeApps(allApps))
             closeDrawer()
         } else {
+            animateHomeOnResume = false
             Toast.makeText(
                 this,
                 R.string.cannot_launch,
