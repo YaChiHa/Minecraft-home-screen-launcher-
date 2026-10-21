@@ -92,9 +92,14 @@ class BlockyBackgroundView @JvmOverloads constructor(
             bitmap?.recycle()
             bitmap = render(width, height)
         }
+        invalidate()
+    }
+
+    /** Apply blur only while a Glass-theme overlay is open. */
+    fun setBackgroundBlur(enabled: Boolean) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             setRenderEffect(
-                if (theme == "Glass") RenderEffect.createBlurEffect(7f, 7f, Shader.TileMode.CLAMP)
+                if (enabled) RenderEffect.createBlurEffect(7f, 7f, Shader.TileMode.CLAMP)
                 else null
             )
         }
