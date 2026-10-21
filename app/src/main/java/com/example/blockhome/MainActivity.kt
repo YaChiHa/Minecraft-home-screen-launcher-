@@ -346,7 +346,7 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
             else -> intArrayOf(Color.rgb(30, 58, 18), Color.rgb(138, 214, 103), Color.rgb(78, 155, 47), Color.rgb(75, 75, 75))
         }
         val buttonIds = intArrayOf(R.id.settings_button, R.id.set_default_button, R.id.drawer_button, R.id.choose_theme_button, R.id.choose_background_button, R.id.reset_background_button, R.id.sound_toggle_button, R.id.back_settings_button, R.id.close_drawer_button)
-        buttonIds.forEach { id -> findViewById<View?>(id)?.background = blockLayer(colors[0], colors[1], colors[2]) }
+        buttonIds.forEach { id -> findViewById<View>(id).background = blockLayer(colors[0], colors[1], colors[2]) }
         findViewById<View>(R.id.settings_panel).background = blockLayer(colors[0], colors[1], colors[3])
         findViewById<View>(R.id.drawer).background = blockLayer(colors[0], colors[1], colors[3])
         findViewById<View>(R.id.home_panel).background = blockLayer(colors[0], colors[1], colors[3])
