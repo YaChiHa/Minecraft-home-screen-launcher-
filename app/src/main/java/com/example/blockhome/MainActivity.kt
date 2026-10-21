@@ -1,5 +1,6 @@
 package com.example.blockhome
 
+import android.app.ActivityOptions
 import android.app.AlertDialog
 import android.app.role.RoleManager
 import android.content.Intent
@@ -504,7 +505,12 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
 
     private fun launchApp(entry: AppEntry) {
         soundManager.playClick()
-        if (repo.launch(entry)) {
+        val launchOptions = ActivityOptions.makeCustomAnimation(
+            this,
+            R.anim.app_open_slow,
+            R.anim.launcher_fade_out
+        ).toBundle()
+        if (repo.launch(entry, launchOptions)) {
             recordAppLaunch(entry)
             homeAdapter.submitList(getHomeApps(allApps))
             closeDrawer()
