@@ -408,15 +408,56 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
     }
 
     private fun openSettings() {
-        findViewById<View>(R.id.settings_panel).visibility = View.VISIBLE
+        val panel = findViewById<View>(R.id.settings_panel)
+        if (panel.visibility == View.VISIBLE) return
+
         val glass = preferences.getString(KEY_THEME, DEFAULT_THEME) == "Glass"
         findViewById<View>(R.id.home_content).visibility =
             if (glass) View.INVISIBLE else View.VISIBLE
+
+        animatePanelTransition(panel, show = true)
     }
 
     private fun closeSettings() {
-        findViewById<View>(R.id.settings_panel).visibility = View.GONE
-        findViewById<View>(R.id.home_content).visibility = View.VISIBLE
+        val panel = findViewById<View>(R.id.settings_panel)
+        if (panel.visibility != View.VISIBLE) {
+            findViewById<View>(R.id.home_content).visibility = View.VISIBLE
+            return
+        }
+
+        animatePanelTransition(panel, show = false) {
+            findViewById<View>(R.id.home_content).visibility = View.VISIBLE
+        }
+    }
+
+    /** Reusable 250 ms transition for launcher panels and future screens. */
+    private fun animatePanelTransition(
+        panel: View,
+        show: Boolean,
+        onEnd: () -> Unit = {}
+    ) {
+        panel.animate().cancel()
+
+        if (show) {
+            panel.alpha = 0f
+            panel.translationY = 18f
+            panel.visibility = View.VISIBLE
+        }
+
+        panel.animate()
+            .alpha(if (show) 1f else 0f)
+            .translationY(if (show) 0f else 18f)
+            .setDuration(TRANSITION_ANIMATION_MS)
+            .setInterpolator(DecelerateInterpolator())
+            .withEndAction {
+                if (!show) {
+                    panel.visibility = View.GONE
+                    panel.alpha = 1f
+                    panel.translationY = 0f
+                }
+                onEnd()
+            }
+            .start()
     }
     private fun updateSoundButton() {
         soundToggleButton.text =
@@ -523,21 +564,11 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
     private fun openDrawer() {
         if (drawer.visibility == View.VISIBLE) return
 
-        drawer.animate().cancel()
-        drawer.alpha = 0f
-        drawer.translationY = 28f
-        drawer.visibility = View.VISIBLE
-
         val glass = preferences.getString(KEY_THEME, DEFAULT_THEME) == "Glass"
         findViewById<View>(R.id.home_content).visibility =
             if (glass) View.INVISIBLE else View.VISIBLE
 
-        drawer.animate()
-            .alpha(1f)
-            .translationY(0f)
-            .setDuration(DRAWER_ANIMATION_MS)
-            .setInterpolator(DecelerateInterpolator())
-            .start()
+        animatePanelTransition(drawer, show = true)
     }
 
     private fun closeDrawer() {
@@ -553,19 +584,9 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
                 0
             )
 
-        drawer.animate().cancel()
-        drawer.animate()
-            .alpha(0f)
-            .translationY(28f)
-            .setDuration(DRAWER_ANIMATION_MS)
-            .setInterpolator(DecelerateInterpolator())
-            .withEndAction {
-                drawer.visibility = View.GONE
-                drawer.alpha = 1f
-                drawer.translationY = 0f
-                findViewById<View>(R.id.home_content).visibility = View.VISIBLE
-            }
-            .start()
+        animatePanelTransition(drawer, show = false) {
+            findViewById<View>(R.id.home_content).visibility = View.VISIBLE
+        }
     }
 
     private fun updateDefaultButton() {
@@ -618,7 +639,7 @@ private companion object {
     const val COLUMNS = 4
     const val HOME_SLOTS = 8
     const val RELOAD_DEBOUNCE_MS = 300L
-    const val DRAWER_ANIMATION_MS = 500L
+    const val TRANSITION_ANIMATION_MS = 250L
 
     const val PREFS_NAME = "blockhome_preferences"
     const val KEY_BACKGROUND_URI = "background_uri"
