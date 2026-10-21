@@ -122,10 +122,11 @@ private lateinit var soundToggleButton: Button
                 .alpha(1f)
                 .scaleX(1f)
                 .scaleY(1f)
-                .setDuration(TRANSITION_ANIMATION_MS)
+                .setDuration(1000L)
                 .setInterpolator(DecelerateInterpolator())
                 .start()
         }
+        updateDefaultButton()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -303,11 +304,6 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
         }
 
         super.onDestroy()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        updateDefaultButton()
     }
 
     override fun onNewIntent(intent: Intent) {
