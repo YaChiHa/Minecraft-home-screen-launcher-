@@ -10,6 +10,8 @@
 
     <string name="settings">SETTINGS</string>
     <string name="blockhome_settings">BLOCKHOME SETTINGS</string>
+    <string name="choose_theme">CHOOSE BLOCK THEME</string>
+    <string name="cancel">CANCEL</string>
     <string name="choose_background">CHOOSE BACKGROUND</string>
     <string name="reset_background">RESET TO DEFAULT</string>
     <string name="back">BACK</string>
