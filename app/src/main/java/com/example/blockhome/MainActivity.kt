@@ -357,6 +357,9 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
         val buttonIds = intArrayOf(R.id.settings_button, R.id.set_default_button, R.id.drawer_button, R.id.choose_theme_button, R.id.choose_background_button, R.id.reset_background_button, R.id.sound_toggle_button, R.id.back_settings_button, R.id.close_drawer_button)
         buttonIds.forEach { id -> findViewById<View>(id).background = blockLayer(colors[0], colors[1], colors[2]) }
         val glass = theme == "Glass"
+        val settingsOpen = findViewById<View>(R.id.settings_panel).visibility == View.VISIBLE
+        findViewById<View>(R.id.home_content).visibility =
+            if (glass && settingsOpen) View.INVISIBLE else View.VISIBLE
         val panelFace = if (glass) 0x447A9DB0 else colors[3]
         val panelEdge = if (glass) 0x6699E8FF else colors[1]
         fun panelBackground(): android.graphics.drawable.Drawable =
@@ -405,10 +408,14 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
 
     private fun openSettings() {
         findViewById<View>(R.id.settings_panel).visibility = View.VISIBLE
+        val glass = preferences.getString(KEY_THEME, DEFAULT_THEME) == "Glass"
+        findViewById<View>(R.id.home_content).visibility =
+            if (glass) View.INVISIBLE else View.VISIBLE
     }
 
     private fun closeSettings() {
         findViewById<View>(R.id.settings_panel).visibility = View.GONE
+        findViewById<View>(R.id.home_content).visibility = View.VISIBLE
     }
     private fun updateSoundButton() {
         soundToggleButton.text =
