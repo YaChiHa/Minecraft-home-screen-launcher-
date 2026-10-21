@@ -150,8 +150,12 @@ repo = AppRepository(applicationContext)
         search = findViewById(R.id.search)
         setDefaultButton = findViewById(R.id.set_default_button)
 
-        homeAdapter = AppAdapter { launchApp(it) }
-        drawerAdapter = AppAdapter { launchApp(it) }
+        homeAdapter = AppAdapter({ launchApp(it) }) {
+            preferences.getString(KEY_THEME, DEFAULT_THEME) ?: DEFAULT_THEME
+        }
+        drawerAdapter = AppAdapter({ launchApp(it) }) {
+            preferences.getString(KEY_THEME, DEFAULT_THEME) ?: DEFAULT_THEME
+        }
 
         findViewById<RecyclerView>(R.id.home_grid).apply {
             layoutManager = GridLayoutManager(this@MainActivity, COLUMNS)
@@ -326,6 +330,9 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
                 val chosen = themes[which]
                 preferences.edit().putString(KEY_THEME, chosen).apply()
                 applyTheme(chosen)
+                backgroundView.setTheme(chosen)
+                homeAdapter.notifyDataSetChanged()
+                drawerAdapter.notifyDataSetChanged()
                 dialog.dismiss()
             }
             .setNegativeButton(R.string.cancel, null)
@@ -333,7 +340,9 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
     }
 
     private fun applySavedTheme() {
-        applyTheme(preferences.getString(KEY_THEME, DEFAULT_THEME) ?: DEFAULT_THEME)
+        val theme = preferences.getString(KEY_THEME, DEFAULT_THEME) ?: DEFAULT_THEME
+        applyTheme(theme)
+        backgroundView.setTheme(theme)
     }
 
     private fun applyTheme(theme: String) {
@@ -347,10 +356,16 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
         }
         val buttonIds = intArrayOf(R.id.settings_button, R.id.set_default_button, R.id.drawer_button, R.id.choose_theme_button, R.id.choose_background_button, R.id.reset_background_button, R.id.sound_toggle_button, R.id.back_settings_button, R.id.close_drawer_button)
         buttonIds.forEach { id -> findViewById<View>(id).background = blockLayer(colors[0], colors[1], colors[2]) }
-        findViewById<View>(R.id.settings_panel).background = blockLayer(colors[0], colors[1], colors[3])
-        findViewById<View>(R.id.drawer).background = blockLayer(colors[0], colors[1], colors[3])
-        findViewById<View>(R.id.home_panel).background = blockLayer(colors[0], colors[1], colors[3])
-        findViewById<View>(R.id.search).setBackgroundColor(colors[3])
+        val glass = theme == "Glass"
+        val panelFace = if (glass) 0x447A9DB0 else colors[3]
+        val panelEdge = if (glass) 0x6699E8FF else colors[1]
+        fun panelBackground(): android.graphics.drawable.Drawable =
+            if (glass) GradientDrawable().apply { setColor(panelFace); setStroke(2, panelEdge) }
+            else blockLayer(colors[0], colors[1], colors[3])
+        findViewById<View>(R.id.settings_panel).background = panelBackground()
+        findViewById<View>(R.id.drawer).background = panelBackground()
+        findViewById<View>(R.id.home_panel).background = panelBackground()
+        findViewById<View>(R.id.search).setBackgroundColor(if (glass) 0x557A9DB0 else colors[3])
     }
 
     private fun blockLayer(shadow: Int, edge: Int, face: Int): android.graphics.drawable.Drawable {
