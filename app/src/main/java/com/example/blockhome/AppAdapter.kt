@@ -1,5 +1,8 @@
 package com.example.blockhome
 
+import android.os.Build
+import android.graphics.drawable.AdaptiveIconDrawable
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -39,7 +42,6 @@ class AppAdapter(
 
     override fun onBindViewHolder(holder: VH, position: Int) {
         val entry = getItem(position)
-        holder.icon.setImageDrawable(entry.icon)
         val palette = when (currentTheme()) {
             "Stone" -> 0xFF777777.toInt() to 0xFFCCCCCC.toInt()
             "Diamond" -> 0xFF087D91.toInt() to 0xFF7DF4FF.toInt()
@@ -47,6 +49,17 @@ class AppAdapter(
             "Glass" -> 0x5578C7E8 to 0x99E5FAFF.toInt()
             "Nether" -> 0xFF5A1515.toInt() to 0xFFFF8060.toInt()
             else -> 0xFF31551E.toInt() to 0xFF9BE36C.toInt()
+        }
+        // Tint only the optional monochrome layer provided by apps; preserve full-colour icons.
+        val monochrome = if (Build.VERSION.SDK_INT >= 33) {
+            (entry.icon as? AdaptiveIconDrawable)?.monochrome
+        } else null
+        if (monochrome != null) {
+            holder.icon.setImageDrawable(monochrome.constantState?.newDrawable()?.mutate() ?: monochrome.mutate())
+            holder.icon.imageTintList = ColorStateList.valueOf(palette.second)
+        } else {
+            holder.icon.setImageDrawable(entry.icon)
+            holder.icon.imageTintList = null
         }
         holder.icon.background = android.graphics.drawable.GradientDrawable().apply {
             setColor(palette.first)
