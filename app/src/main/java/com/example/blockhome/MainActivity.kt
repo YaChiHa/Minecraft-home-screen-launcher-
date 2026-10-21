@@ -370,13 +370,40 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
             allApps = apps
 
             homeAdapter.submitList(
-                apps.take(HOME_SLOTS)
+                getHomeApps(apps)
             )
 
             applyFilter(
                 search.text?.toString().orEmpty()
             )
         }
+    }
+
+    private fun getHomeApps(apps: List<AppEntry>): List<AppEntry> {
+        val usage = preferences.all
+            .filterKeys { it.startsWith(KEY_APP_USAGE_PREFIX) }
+            .mapNotNull { (key, value) ->
+                val parts = (value as? String)?.split('|') ?: return@mapNotNull null
+                if (parts.size != 2) return@mapNotNull null
+                val count = parts[0].toIntOrNull() ?: return@mapNotNull null
+                val lastUsed = parts[1].toLongOrNull() ?: return@mapNotNull null
+                key.removePrefix(KEY_APP_USAGE_PREFIX) to (count to lastUsed)
+            }.toMap()
+
+        return apps.sortedWith(
+            compareByDescending<AppEntry> { usage[it.component.flattenToString()]?.first ?: 0 }
+                .thenByDescending { usage[it.component.flattenToString()]?.second ?: 0L }
+                .thenBy(String.CASE_INSENSITIVE_ORDER) { it.label }
+        ).take(HOME_SLOTS)
+    }
+
+    private fun recordAppLaunch(entry: AppEntry) {
+        val key = KEY_APP_USAGE_PREFIX + entry.component.flattenToString()
+        val previous = preferences.getString(key, null)?.split('|')
+        val count = previous?.getOrNull(0)?.toIntOrNull() ?: 0
+        preferences.edit()
+            .putString(key, (count + 1).toString() + "|" + System.currentTimeMillis())
+            .apply()
     }
 
     private fun applyFilter(query: String) {
@@ -399,6 +426,8 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
     private fun launchApp(entry: AppEntry) {
         soundManager.playClick()
         if (repo.launch(entry)) {
+            recordAppLaunch(entry)
+            homeAdapter.submitList(getHomeApps(allApps))
             closeDrawer()
         } else {
             Toast.makeText(
@@ -486,6 +515,7 @@ private companion object {
     const val KEY_BACKGROUND_URI = "background_uri"
     const val KEY_SOUND_ENABLED = "sound_enabled"
     const val KEY_SOUND_VOLUME = "sound_volume"
+    const val KEY_APP_USAGE_PREFIX = "app_usage_"
     const val DEFAULT_SOUND_VOLUME = 70
 }
 }
