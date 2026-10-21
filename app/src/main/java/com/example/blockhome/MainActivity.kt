@@ -150,12 +150,12 @@ repo = AppRepository(applicationContext)
         search = findViewById(R.id.search)
         setDefaultButton = findViewById(R.id.set_default_button)
 
-        homeAdapter = AppAdapter({ launchApp(it) }) {
+        homeAdapter = AppAdapter({
             preferences.getString(KEY_THEME, DEFAULT_THEME) ?: DEFAULT_THEME
-        }
-        drawerAdapter = AppAdapter({ launchApp(it) }) {
+        }) { launchApp(it) }
+        drawerAdapter = AppAdapter({
             preferences.getString(KEY_THEME, DEFAULT_THEME) ?: DEFAULT_THEME
-        }
+        }) { launchApp(it) }
 
         findViewById<RecyclerView>(R.id.home_grid).apply {
             layoutManager = GridLayoutManager(this@MainActivity, COLUMNS)
