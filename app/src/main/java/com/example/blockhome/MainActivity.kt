@@ -12,6 +12,7 @@ import android.os.Looper
 import android.os.UserHandle
 import android.provider.Settings
 import android.view.View
+import android.view.animation.DecelerateInterpolator
 import android.view.inputmethod.InputMethodManager
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
@@ -520,10 +521,23 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
     }
 
     private fun openDrawer() {
+        if (drawer.visibility == View.VISIBLE) return
+
+        drawer.animate().cancel()
+        drawer.alpha = 0f
+        drawer.translationY = 28f
         drawer.visibility = View.VISIBLE
+
         val glass = preferences.getString(KEY_THEME, DEFAULT_THEME) == "Glass"
         findViewById<View>(R.id.home_content).visibility =
             if (glass) View.INVISIBLE else View.VISIBLE
+
+        drawer.animate()
+            .alpha(1f)
+            .translationY(0f)
+            .setDuration(DRAWER_ANIMATION_MS)
+            .setInterpolator(DecelerateInterpolator())
+            .start()
     }
 
     private fun closeDrawer() {
@@ -539,8 +553,19 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
                 0
             )
 
-        drawer.visibility = View.GONE
-        findViewById<View>(R.id.home_content).visibility = View.VISIBLE
+        drawer.animate().cancel()
+        drawer.animate()
+            .alpha(0f)
+            .translationY(28f)
+            .setDuration(DRAWER_ANIMATION_MS)
+            .setInterpolator(DecelerateInterpolator())
+            .withEndAction {
+                drawer.visibility = View.GONE
+                drawer.alpha = 1f
+                drawer.translationY = 0f
+                findViewById<View>(R.id.home_content).visibility = View.VISIBLE
+            }
+            .start()
     }
 
     private fun updateDefaultButton() {
@@ -593,6 +618,7 @@ private companion object {
     const val COLUMNS = 4
     const val HOME_SLOTS = 8
     const val RELOAD_DEBOUNCE_MS = 300L
+    const val DRAWER_ANIMATION_MS = 1500L
 
     const val PREFS_NAME = "blockhome_preferences"
     const val KEY_BACKGROUND_URI = "background_uri"
