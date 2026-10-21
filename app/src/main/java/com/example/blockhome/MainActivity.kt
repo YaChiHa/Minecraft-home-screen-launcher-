@@ -1,5 +1,6 @@
 package com.example.blockhome
 
+import android.app.AlertDialog
 import android.app.role.RoleManager
 import android.content.Intent
 import android.content.SharedPreferences
@@ -12,6 +13,8 @@ import android.os.UserHandle
 import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.widget.Button
 import android.widget.EditText
 import android.widget.SeekBar
@@ -121,6 +124,7 @@ repo = AppRepository(applicationContext)
         launcherApps = getSystemService(LauncherApps::class.java)
 
         backgroundView = findViewById(R.id.background_view)
+        applySavedTheme()
         loadSavedBackground()
 
         val content = findViewById<View>(R.id.content_layer)
@@ -174,6 +178,11 @@ repo = AppRepository(applicationContext)
         findViewById<Button>(R.id.settings_button).setOnClickListener {
             soundManager.playClick()
             openSettings()
+        }
+
+        findViewById<Button>(R.id.choose_theme_button).setOnClickListener {
+            soundManager.playClick()
+            showThemePicker()
         }
 
         findViewById<Button>(R.id.choose_background_button).setOnClickListener {
@@ -305,6 +314,54 @@ soundVolumeSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeLi
 
             backgroundView.setDefaultBackground()
         }
+    }
+
+    private fun showThemePicker() {
+        val themes = arrayOf("Grass & Dirt", "Stone", "Diamond", "Amethyst", "Glass", "Nether")
+        val current = preferences.getString(KEY_THEME, DEFAULT_THEME) ?: DEFAULT_THEME
+        val selected = themes.indexOf(current).coerceAtLeast(0)
+        AlertDialog.Builder(this)
+            .setTitle(R.string.choose_theme)
+            .setSingleChoiceItems(themes, selected) { dialog, which ->
+                val chosen = themes[which]
+                preferences.edit().putString(KEY_THEME, chosen).apply()
+                applyTheme(chosen)
+                dialog.dismiss()
+            }
+            .setNegativeButton(R.string.cancel, null)
+            .show()
+    }
+
+    private fun applySavedTheme() {
+        applyTheme(preferences.getString(KEY_THEME, DEFAULT_THEME) ?: DEFAULT_THEME)
+    }
+
+    private fun applyTheme(theme: String) {
+        val colors = when (theme) {
+            "Stone" -> intArrayOf(Color.rgb(38, 38, 38), Color.rgb(165, 165, 165), Color.rgb(95, 95, 95), Color.rgb(50, 50, 50))
+            "Diamond" -> intArrayOf(Color.rgb(0, 55, 70), Color.rgb(110, 245, 255), Color.rgb(0, 160, 190), Color.rgb(0, 90, 110))
+            "Amethyst" -> intArrayOf(Color.rgb(45, 20, 65), Color.rgb(220, 170, 255), Color.rgb(135, 70, 190), Color.rgb(75, 35, 110))
+            "Glass" -> intArrayOf(0x66303030, 0x99D8F5FF.toInt(), 0x6675C8E8, 0x667A9DB0)
+            "Nether" -> intArrayOf(Color.rgb(65, 12, 12), Color.rgb(255, 120, 90), Color.rgb(170, 35, 25), Color.rgb(95, 15, 20))
+            else -> intArrayOf(Color.rgb(30, 58, 18), Color.rgb(138, 214, 103), Color.rgb(78, 155, 47), Color.rgb(75, 75, 75))
+        }
+        val buttonIds = intArrayOf(R.id.settings_button, R.id.set_default_button, R.id.drawer_button, R.id.choose_theme_button, R.id.choose_background_button, R.id.reset_background_button, R.id.sound_toggle_button, R.id.back_settings_button, R.id.close_drawer_button)
+        buttonIds.forEach { id -> findViewById<View?>(id)?.background = blockLayer(colors[0], colors[1], colors[2]) }
+        findViewById<View>(R.id.settings_panel).background = blockLayer(colors[0], colors[1], colors[3])
+        findViewById<View>(R.id.drawer).background = blockLayer(colors[0], colors[1], colors[3])
+        findViewById<View>(R.id.home_panel).background = blockLayer(colors[0], colors[1], colors[3])
+        findViewById<View>(R.id.search).setBackgroundColor(colors[3])
+    }
+
+    private fun blockLayer(shadow: Int, edge: Int, face: Int): android.graphics.drawable.Drawable {
+        val layers = android.graphics.drawable.LayerDrawable(arrayOf(
+            GradientDrawable().apply { setColor(shadow) },
+            GradientDrawable().apply { setColor(edge) },
+            GradientDrawable().apply { setColor(face) }
+        ))
+        layers.setLayerInset(1, 3, 3, 3, 3)
+        layers.setLayerInset(2, 6, 6, 3, 6)
+        return layers
     }
 
     private fun chooseBackground() {
@@ -513,6 +570,8 @@ private companion object {
 
     const val PREFS_NAME = "blockhome_preferences"
     const val KEY_BACKGROUND_URI = "background_uri"
+    const val KEY_THEME = "launcher_theme"
+    const val DEFAULT_THEME = "Grass & Dirt"
     const val KEY_SOUND_ENABLED = "sound_enabled"
     const val KEY_SOUND_VOLUME = "sound_volume"
     const val KEY_APP_USAGE_PREFIX = "app_usage_"
